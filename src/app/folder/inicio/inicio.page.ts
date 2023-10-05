@@ -1,17 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+
 @Component({
-  selector: 'app-root',
-  templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss'],
+  selector: 'app-inicio',
+  templateUrl: './inicio.page.html',
+  styleUrls: ['./inicio.page.scss'],
 })
-export class AppComponent {
+export class InicioPage implements OnInit {
   public appPages = [
-    { title: 'Inicio', url: '/folder/inicio', icon: 'home' },
-    { title: 'Sobre la aplicación', url: '/folder/about/tabs/info1', icon: 'reader' },
+    { title: 'Sobre la aplicación', url: '/folder/about', icon: 'reader' },
     { title: 'Nivel diario equivalente', url: '/folder/nde', icon: 'speedometer' },
     { title: 'Otros cálculos', url: '/folder/other', icon: 'calculator' },
     { title: 'Recursos adicionales', url: '/folder/trash', icon: 'book' },
     { title: 'INSST', url: '/folder/spam', icon: 'school' },
   ];
-  constructor() {}
+  constructor() { }
+
+  ngOnInit() {
+  }
+
 }

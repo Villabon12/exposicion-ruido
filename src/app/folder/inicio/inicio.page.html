@@ -1,0 +1,31 @@
+<!-- Card con imagen y texto -->
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Inicio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-card>
+  <img src="assets/ruido-salud-ocupacional-riesgo-laboral.jpg"/>
+  <ion-card-content>
+    <ion-card-title>
+      Título de tu card
+    </ion-card-title>
+    <p>
+      Aquí va el texto de tu card.
+    </p>
+  </ion-card-content>
+</ion-card>
+
+<!-- Card o navegación con las demás opciones -->
+<ion-card>
+  <ion-list>
+    <ion-item *ngFor="let p of appPages" [routerLink]="[p.url]" detail="true">
+      <ion-icon slot="start" [name]="p.icon"></ion-icon>
+      <ion-label>{{ p.title }}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-card>

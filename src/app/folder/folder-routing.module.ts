@@ -7,7 +7,15 @@ const routes: Routes = [
   {
     path: '',
     component: FolderPage
+  },  {
+    path: 'inicio',
+    loadChildren: () => import('./inicio/inicio.module').then( m => m.InicioPageModule)
+  },
+  {
+    path: 'about',
+    loadChildren: () => import('./about/about.module').then( m => m.AboutPageModule)
   }
+
 ];
 
 @NgModule({
