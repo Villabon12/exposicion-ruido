@@ -1,0 +1,8 @@
+{
+  "name": "exposicion-ruido",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular",
+  "id": "a7140eba"
+}
