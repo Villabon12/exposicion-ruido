@@ -14,6 +14,22 @@ const routes: Routes = [
   {
     path: 'about',
     loadChildren: () => import('./about/about.module').then( m => m.AboutPageModule)
+  },
+  {
+    path: 'nde',
+    loadChildren: () => import('./nde/nde.module').then( m => m.NdePageModule)
+  },
+  {
+    path: 'other',
+    loadChildren: () => import('./other/other.module').then( m => m.OtherPageModule)
+  },
+  {
+    path: 'recursos',
+    loadChildren: () => import('./recursos/recursos.module').then( m => m.RecursosPageModule)
+  },
+  {
+    path: 'spam',
+    loadChildren: () => import('./spam/spam.module').then( m => m.SpamPageModule)
   }
 
 ];

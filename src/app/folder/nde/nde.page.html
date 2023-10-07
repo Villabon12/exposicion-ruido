@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Nivel diario equivalente</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- Método de medida -->
+  <ion-list *ngIf="currentStep === 1">
+    <ion-item>
+      <ion-label>Elige el método de medida</ion-label>
+      <ion-select [(ngModel)]="selectedMethod">
+        <ion-select-option value="1">Método 1</ion-select-option>
+        <ion-select-option value="2">Método 2</ion-select-option>
+        <!-- Agrega más opciones según sea necesario -->
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <!-- Instrumento de medición -->
+  <ion-list *ngIf="currentStep === 2">
+    <ion-item>
+      <ion-label>Elige el instrumento de medición</ion-label>
+      <ion-select [(ngModel)]="selectedInstrument">
+        <ion-select-option value="1">Instrumento 1</ion-select-option>
+        <ion-select-option value="2">Instrumento 2</ion-select-option>
+        <!-- Agrega más opciones según sea necesario -->
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <!-- Entradas numéricas -->
+  <ion-list *ngIf="currentStep === 3">
+    <ion-item>
+      <ion-label position="floating">Dato 1</ion-label>
+      <ion-input type="number" [(ngModel)]="data1"></ion-input>
+    </ion-item>
+    <!-- Repite para los otros datos numéricos -->
+  </ion-list>
+
+  <!-- Botón para avanzar al siguiente paso o generar el PDF -->
+  <ion-button expand="full" *ngIf="currentStep > 1" (click)="previousStep()">Anterior</ion-button>
+  <ion-button expand="full" *ngIf="currentStep < 3" (click)="nextStep()">Siguiente</ion-button>
+  <ion-button expand="full" *ngIf="currentStep === 3" (click)="generatePDF()">Generar PDF</ion-button>
+  <ion-button expand="full" *ngIf="pdfSaved" (click)="openPDF()">Abrir PDF</ion-button> 
+
+
+</ion-content>

@@ -14,6 +14,22 @@ const routes: Routes = [
   {
     path: 'folder/about',
     loadChildren: () => import('./folder/about/tabs/tabs.module').then( m => m.TabsModule)
+  },
+  {
+    path: 'folder/nde',
+    loadChildren: () => import('./folder/nde/nde.module').then( m => m.NdePageModule)
+  },
+  {
+    path: 'folder/other',
+    loadChildren: () => import('./folder/other/other.module').then( m => m.OtherPageModule)
+  },
+  {
+    path: 'folder/recursos',
+    loadChildren: () => import('./folder/recursos/recursos.module').then( m => m.RecursosPageModule)
+  },
+  {
+    path: 'folder/spam',
+    loadChildren: () => import('./folder/spam/spam.module').then( m => m.SpamPageModule)
   }
 ];
 
