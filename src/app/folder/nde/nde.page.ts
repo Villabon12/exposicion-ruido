@@ -18,6 +18,8 @@ export class NdePage implements OnInit {
   selectedMethod: string | null = null;
   selectedInstrument: string | null = null;
   noiseLevels: number[] = [];
+  exposureTime: number = null;
+  LAeqdResult: number;
 
   // Declara las otras variables numéricas aquí
   currentStep = 1;
@@ -37,10 +39,13 @@ export class NdePage implements OnInit {
     }
     if (this.currentStep === 3 && !this.noiseLevels) {
       // Muestra un mensaje de error
-      alert('Por favor, ingresa el Dato 1.');
+      alert('Por favor, rellena los campos');
       return;
     }
     this.currentStep++;
+    if (this.currentStep === 3) {
+      this.LAeqdResult = this.calculateLAeqd(this.noiseLevels, this.exposureTime);
+    }
     if (this.currentStep > 4) {
       // Si supera el número total de pasos, puedes resetearlo o navegar a otra página
       this.currentStep = 1;
@@ -55,18 +60,16 @@ export class NdePage implements OnInit {
   }
 
   updateNoiseLevels() {
+    let size = 0;
     switch (this.selectedMethod) {
       case '1':
-        this.noiseLevels = new Array(5).fill(null);
-        break;
       case '2':
-        this.noiseLevels = new Array(3).fill(null);
-        break;
       case '3':
-        this.noiseLevels = new Array(3).fill(null);
+        size = 1;
         break;
     }
-  }  
+    this.noiseLevels = Array.from({ length: size }, () => null);
+}
 
   addNoiseLevelField() {
     this.noiseLevels.push(null);
@@ -74,6 +77,22 @@ export class NdePage implements OnInit {
 
   trackByFn(index: number, item: any): number {
     return index; // o cualquier otro valor único
+  }
+
+  calculateLAeqd(noiseLevels: number[], exposureTime: number): number {
+    let sum = 0;
+    for (let level of noiseLevels) {
+      if (level) { // Asegúrate de que el nivel no sea nulo o cero
+        sum += Math.pow(10, level / 10);
+      }
+    }
+  
+    if (sum === 0 || exposureTime === 0) {
+      return null; // Retorna null si no se puede calcular
+    }
+  
+    const LAeqd = 10 * Math.log10((sum * (exposureTime / 60)) / 8); // Convertir minutos a horas
+    return LAeqd;
   }
 
   generatePDF() {
