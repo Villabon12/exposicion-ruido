@@ -92,18 +92,19 @@
 
       <!-- Entradas numéricas -->
       <ion-list *ngIf="currentStep === 3">
-        <ion-item *ngFor="let level of noiseLevels; let i = index">
+        <ion-item *ngFor="let level of noiseLevels; let i = index; trackBy: trackByFn">
           <ion-label position="floating">Nivel de ruido</ion-label>
           <ion-input type="number" [(ngModel)]="noiseLevels[i]" placeholder="Nivel de ruido"></ion-input>
         </ion-item>
-        <ion-button (click)="addNoiseLevel()">+</ion-button>
+    
+        <ion-button (click)="addNoiseLevelField()">+</ion-button>
         
         <ion-item>
           <ion-label position="floating">Tiempo total (minutos)</ion-label>
           <ion-input type="number" [(ngModel)]="exposureTime" placeholder="Tiempo"></ion-input>
         </ion-item>
-      
-      </ion-list>
+    </ion-list>
+    
 
       <ion-list *ngIf="currentStep === 4">
         <ion-item>
