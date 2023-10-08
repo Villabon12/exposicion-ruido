@@ -8,45 +8,119 @@
 </ion-header>
 
 <ion-content>
+  <ion-card>
+    <ion-card-content>
+      <!-- Método de medida -->
+      <ion-list *ngIf="currentStep === 1">
+        <h2>Selección de método de cálculo</h2>
+        <p>
+          *Elija el método de cálculo que desee utilizar, en función de la
+          información de que dispone
+        </p>
+        <ion-item>
+          <ion-label>Elige el método de medida</ion-label>
+          <ion-select
+            [(ngModel)]="selectedMethod"
+            (ionChange)="updateNoiseLevels()"
+          >
+            <ion-select-option value="1"
+              >Medición basada en el puesto de trabajo</ion-select-option
+            >
+            <ion-select-option value="2"
+              >Medición de una jornada completa</ion-select-option
+            >
+            <ion-select-option value="3"
+              >Medición basada en la tarea</ion-select-option
+            >
+          </ion-select>
+        </ion-item>
+      </ion-list>
 
-  <!-- Método de medida -->
-  <ion-list *ngIf="currentStep === 1">
-    <ion-item>
-      <ion-label>Elige el método de medida</ion-label>
-      <ion-select [(ngModel)]="selectedMethod">
-        <ion-select-option value="1">Método 1</ion-select-option>
-        <ion-select-option value="2">Método 2</ion-select-option>
-        <!-- Agrega más opciones según sea necesario -->
-      </ion-select>
-    </ion-item>
-  </ion-list>
+      <!-- Título y Nota para el currentStep 2 -->
+      <ion-list *ngIf="currentStep === 2">
+        <ion-item>
+          <ion-label>
+            <h2 *ngIf="selectedMethod === '1'">
+              Medición basada en el puesto de trabajo
+            </h2>
+            <h2 *ngIf="selectedMethod === '2'">
+              Medición de una jornada completa
+            </h2>
+            <p>
+              <i
+                >*Especifique la incertidumbre típica u<sub>2</sub> de los
+                instrumentos de medición utilizados.</i
+              >
+            </p>
+          </ion-label>
+        </ion-item>
 
-  <!-- Instrumento de medición -->
-  <ion-list *ngIf="currentStep === 2">
-    <ion-item>
-      <ion-label>Elige el instrumento de medición</ion-label>
-      <ion-select [(ngModel)]="selectedInstrument">
-        <ion-select-option value="1">Instrumento 1</ion-select-option>
-        <ion-select-option value="2">Instrumento 2</ion-select-option>
-        <!-- Agrega más opciones según sea necesario -->
-      </ion-select>
-    </ion-item>
-  </ion-list>
+        <!-- Opciones de Instrumentos de Medición -->
+        <ion-item>
+          <ion-label>Elige el instrumento de medición</ion-label>
+          <ion-select [(ngModel)]="selectedInstrument">
+            <ion-select-option value="1"
+              >Sonómetro de clase 1, según se especifica en la Norma IEC
+              61672-1:2002 (0,7 dB)</ion-select-option
+            >
+            <ion-select-option value="2"
+              >Exposímetro sonoro personal, según se especifica en la Norma IEC
+              61652 (1.5 dB)</ion-select-option
+            >
+            <ion-select-option value="3"
+              >Sonómetro de clase 2, según se especifica en la Norma IEC
+              61672-1:2002 (1,5 dB)</ion-select-option
+            >
+          </ion-select>
+        </ion-item>
 
-  <!-- Entradas numéricas -->
-  <ion-list *ngIf="currentStep === 3">
-    <ion-item>
-      <ion-label position="floating">Dato 1</ion-label>
-      <ion-input type="number" [(ngModel)]="data1"></ion-input>
-    </ion-item>
-    <!-- Repite para los otros datos numéricos -->
-  </ion-list>
+        <!-- Nota Adicional -->
+        <ion-item>
+          <ion-label>
+            <p>
+              <i
+                >Nota: Las incertidumbres típicas, u<sub>2</sub>, especificadas
+                se basan en datos empíricos representativos para la mayoría de
+                situaciones relevantes y sólo son válidas para
+                L<sub>p,A,eqT</sub>. La incertidumbre para L<sub>p,Cpico</sub>
+                puede ser considerablemente superior.</i
+              >
+            </p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
 
-  <!-- Botón para avanzar al siguiente paso o generar el PDF -->
-  <ion-button expand="full" *ngIf="currentStep > 1" (click)="previousStep()">Anterior</ion-button>
-  <ion-button expand="full" *ngIf="currentStep < 3" (click)="nextStep()">Siguiente</ion-button>
-  <ion-button expand="full" *ngIf="currentStep === 3" (click)="generatePDF()">Generar PDF</ion-button>
-  <ion-button expand="full" *ngIf="pdfSaved" (click)="openPDF()">Abrir PDF</ion-button> 
+      <!-- Entradas numéricas -->
+      <ion-list *ngIf="currentStep === 3">
+        <ion-item
+          *ngFor="let level of noiseLevels; let i = index; trackBy: trackByFn"
+        >
+          <ion-label position="floating">Nivel de ruido</ion-label>
+          <ion-input
+            type="number"
+            [(ngModel)]="noiseLevels[i]"
+            placeholder="Nivel de ruido"
+          ></ion-input>
+        </ion-item>
+        <ion-button (click)="addNoiseLevel()">+</ion-button>
+      </ion-list>
 
-
+      <!-- Botón para avanzar al siguiente paso o generar el PDF -->
+      <ion-button expand="full" *ngIf="currentStep > 1" (click)="previousStep()"
+        >Anterior</ion-button
+      >
+      <ion-button expand="full" *ngIf="currentStep < 4" (click)="nextStep()"
+        >Siguiente</ion-button
+      >
+      <ion-button
+        expand="full"
+        *ngIf="currentStep === 4"
+        (click)="generatePDF()"
+        >Generar PDF</ion-button
+      >
+      <ion-button expand="full" *ngIf="pdfSaved" (click)="openPDF()"
+        >Abrir PDF</ion-button
+      >
+    </ion-card-content>
+  </ion-card>
 </ion-content>

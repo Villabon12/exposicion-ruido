@@ -3,25 +3,50 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>info2</ion-title>
+    <ion-title>Sobre la aplicación</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">info2</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-card>
+    <ion-card-content>
+      <ion-card-title
+        ><h1><strong>Concepto básicos</strong></h1></ion-card-title
+      >
+      <br />
+      <h2><strong>Nivel de exposición diario equivalente</strong></h2>
+      <p>
+        es el nivel de presión acústica, equivalente en DBA, cuando el tiempo de
+        exposición se normaliza a una jornada de 8 horas.
+      </p>
+      <ion-img src="assets/imagen3.png"></ion-img>
+      <br />
+      <h3><strong>Variables:</strong></h3>
+      <p>- L<sub>Aeq,d</sub>: Nivel de exposición diario equivalente</p>
+      <p>
+        - L<sub>Aeq,T</sub>: Nivel de presión acústica continuo equivalente
+        ponderado en A, en el tiempo (T)
+      </p>
+      <p>- T: Tiempo de exposición al ruido en horas/dia</p>
+      <br />
+      <h2><strong>Nivel de exposición semanal equivalente</strong></h2>
+      <p>
+        El nivel de exposición semanal equivalente, L<sub>Aeq,s</sub> es el
+        nivel, en decibelios A, dado por la expresión:
+      </p>
+      <ion-img src="assets/imagen4.png"></ion-img>
+      <br />
+      <p>
+        donde «m» es el número de días a la semana en que el trabajador está
+        expuesto al ruido y L<sub>Aeq,di</sub> es el nivel de exposición diario
+        equivalente correspondiente al día «i». Es un nivel de exposición
+        promediado a cinco días de trabajo a la semana que puede emplearse para
+        trabajos en los que la exposición diaria al ruido varíe
+        considerablemente de una jornada laboral a otra, y siempre que el nivel
+        de exposición semanal equivalente no supere el valor límite de
+        exposición de 87 dB (A) y se tomen las medidas adecuadas para reducir al
+        mínimo el riesgo asociado a dichos trabajos
+      </p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
-
-<ion-card>
-  <ion-card-content>
-    <ion-card-title>
-      Título de tu card
-    </ion-card-title>
-    <p>
-      Aquí va el texto de tu card.
-    </p>
-  </ion-card-content>
-</ion-card>

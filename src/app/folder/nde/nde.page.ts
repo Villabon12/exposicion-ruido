@@ -15,17 +15,33 @@ import { File } from '@ionic-native/file/ngx';
   styleUrls: ['./nde.page.scss'],
 })
 export class NdePage implements OnInit {
-  selectedMethod!: number;
-  selectedInstrument!: number;
-  data1!: number;
+  selectedMethod: string | null = null;
+  selectedInstrument: string | null = null;
+  noiseLevels: number[] = [];
+
   // Declara las otras variables numéricas aquí
   currentStep = 1;
   pdfObject: any;
   pdfSaved: boolean = false;
 
   nextStep() {
+    if (this.currentStep === 1 && !this.selectedMethod) {
+      // Muestra un mensaje de error
+      alert('Por favor, elige un método de medida.');
+      return;
+    }
+    if (this.currentStep === 2 && !this.selectedInstrument) {
+      // Muestra un mensaje de error
+      alert('Por favor, elige un instrumento de medición.');
+      return;
+    }
+    if (this.currentStep === 3 && !this.noiseLevels) {
+      // Muestra un mensaje de error
+      alert('Por favor, ingresa el Dato 1.');
+      return;
+    }
     this.currentStep++;
-    if (this.currentStep > 3) {
+    if (this.currentStep > 4) {
       // Si supera el número total de pasos, puedes resetearlo o navegar a otra página
       this.currentStep = 1;
     }
@@ -37,6 +53,29 @@ export class NdePage implements OnInit {
       this.currentStep = 1;
     }
   }
+
+  updateNoiseLevels() {
+    switch (this.selectedMethod) {
+      case '1':
+        this.noiseLevels = new Array(5).fill(null);
+        break;
+      case '2':
+        this.noiseLevels = new Array(3).fill(null);
+        break;
+      case '3':
+        this.noiseLevels = new Array(3).fill(null);
+        break;
+    }
+  }  
+
+  addNoiseLevelField() {
+    this.noiseLevels.push(null);
+  }
+
+  trackByFn(index: number, item: any): number {
+    return index; // o cualquier otro valor único
+  }
+
   generatePDF() {
     var dd = {
       content: [
@@ -366,68 +405,31 @@ export class NdePage implements OnInit {
 
     this.pdfObject = pdfMake.createPdf(<any>dd);
     this.downloadPdf();
-    // this.pdfObject.getBase64((base64String) => {
-    //   this.savePDF(base64String);
-    // });
-    // this.pdfObject.getBlob(blob => {this.savePDF(blob)});
   }
 
   downloadPdf() {
     if (this.plt.is('cordova')) {
-    this.pdfObject.getBuffer((buffer) => {
-    var blob = new Blob([buffer], { type: 'application/pdf' });
-    
+      this.pdfObject.getBuffer((buffer) => {
+        var blob = new Blob([buffer], { type: 'application/pdf' });
+
         // Save the PDF to the data Directory of our App
-        this.file.writeFile(this.file.dataDirectory, 'myletter.pdf', blob, { replace: true }).then(fileEntry => {
-          // Open the PDf with the correct OS tools
-          this.fileOpener.open(this.file.dataDirectory + 'myletter.pdf', 'application/pdf');
-        })
+        this.file
+          .writeFile(this.file.dataDirectory, 'myletter.pdf', blob, {
+            replace: true,
+          })
+          .then((fileEntry) => {
+            // Open the PDf with the correct OS tools
+            this.fileOpener.open(
+              this.file.dataDirectory + 'myletter.pdf',
+              'application/pdf'
+            );
+          });
       });
     } else {
       // On a browser simply use download!
       this.pdfObject.download();
     }
   }
-  // savePDF(blob: Blob) {
-  //   const fileName = 'recomendacion.pdf';
-  //   this.file.writeFile(this.file.dataDirectory, fileName, blob, { replace: true }).then(fileEntry => {
-  //     alert('Archivo guardado');
-  //     this.pdfSaved = true;
-  //   }).catch(err => {
-  //     alert('Error writing file'+ err);
-  //   });
-  // }
-  // async savePDF(base64String: string) {
-  //   const fileName = 'recomendacion.pdf';
-  //   try {
-  //     await Filesystem.writeFile({
-  //       path: fileName,
-  //       data: base64String,
-  //       directory: Directory.Documents,
-  //       encoding: Encoding.UTF8,
-  //     });
-  //     alert('Archivo guardado');
-  //     this.pdfSaved = true;
-  //   } catch (err) {
-  //     console.error('Error writing file', err);
-  //   }
-  // }
-
-  // async openPDF() {
-  //   const fileName = 'recomendacion.pdf';
-  //   try {
-  //     const fileUri = await Filesystem.getUri({
-  //       path: fileName,
-  //       directory: Directory.Documents,
-  //     });
-  //     // Aquí puedes usar el URI para abrir el PDF con la herramienta que elijas
-  //     // Por ejemplo, si tienes un plugin o una función para abrir archivos, puedes usarlo aquí.
-  //     // this.openFileFunction(fileUri.uri);
-  //     window.open(fileUri.uri, '_blank');
-  //   } catch (err) {
-  //     console.error('Error opening file', err);
-  //   }
-  // }
 
   constructor(
     private navCtrl: NavController,

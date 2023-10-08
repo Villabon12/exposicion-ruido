@@ -3,25 +3,32 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>info1</ion-title>
+    <ion-title>Sobre la aplicación</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">info1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-card>
+    <ion-card-content>
+      <ion-card-title
+        ><h1><strong>Información</strong></h1></ion-card-title
+      >
+      <br />
+      <p>
+        Para la evaluación de la exposición del ruido en los diferentes sectores
+        laborales se basa en el cálculo de los niveles de ruido máximos
+        permisibles según el lugar y la hora en que se produzca su emisión,
+        establecidos en la Resolución 8321 del 04 de agosto de 1983, por la cual
+        se dictan normas sobre protección y conservación de la audición de la
+        salud y el bienestar de las personas, por causa de la producción y
+        emisión del ruido mediante la siguiente formula Lp= 20 Log(p/Pref).
+      </p>
+      <br />
+      <h2><strong>Tabla de valores</strong></h2>
+      <ion-img src="assets/Imagen1.jpg"></ion-img>
+      <br />
+      <h2><strong>Nivel exposición diaria</strong></h2>
+      <ion-img src="assets/imagen2.png"></ion-img>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
-
-<ion-card>
-  <ion-card-content>
-    <ion-card-title>
-      Título de tu card
-    </ion-card-title>
-    <p>
-      Aquí va el texto de tu card.
-    </p>
-  </ion-card-content>
-</ion-card>
