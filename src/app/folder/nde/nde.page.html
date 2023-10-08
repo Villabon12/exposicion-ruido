@@ -14,8 +14,10 @@
       <ion-list *ngIf="currentStep === 1">
         <h2>Selección de método de cálculo</h2>
         <p>
-          *Elija el método de cálculo que desee utilizar, en función de la
-          información de que dispone
+          <i>
+            *Elija el método de cálculo que desee utilizar, en función de la
+            información de que dispone
+          </i>
         </p>
         <ion-item>
           <ion-label>Elige el método de medida</ion-label>
@@ -39,7 +41,7 @@
       <!-- Título y Nota para el currentStep 2 -->
       <ion-list *ngIf="currentStep === 2">
         <ion-item>
-          <ion-label>
+          <ion-text>
             <h2 *ngIf="selectedMethod === '1'">
               Medición basada en el puesto de trabajo
             </h2>
@@ -52,22 +54,22 @@
                 instrumentos de medición utilizados.</i
               >
             </p>
-          </ion-label>
+          </ion-text>
         </ion-item>
 
         <!-- Opciones de Instrumentos de Medición -->
         <ion-item>
           <ion-label>Elige el instrumento de medición</ion-label>
           <ion-select [(ngModel)]="selectedInstrument">
-            <ion-select-option value="1"
+            <ion-select-option [value]="1"
               >Sonómetro de clase 1, según se especifica en la Norma IEC
               61672-1:2002 (0,7 dB)</ion-select-option
             >
-            <ion-select-option value="2"
+            <ion-select-option [value]="2"
               >Exposímetro sonoro personal, según se especifica en la Norma IEC
-              61652 (1.5 dB)</ion-select-option
+              61652 (1,5 dB)</ion-select-option
             >
-            <ion-select-option value="3"
+            <ion-select-option [value]="3"
               >Sonómetro de clase 2, según se especifica en la Norma IEC
               61672-1:2002 (1,5 dB)</ion-select-option
             >
@@ -76,7 +78,7 @@
 
         <!-- Nota Adicional -->
         <ion-item>
-          <ion-label>
+          <ion-text>
             <p>
               <i
                 >Nota: Las incertidumbres típicas, u<sub>2</sub>, especificadas
@@ -86,34 +88,131 @@
                 puede ser considerablemente superior.</i
               >
             </p>
-          </ion-label>
+          </ion-text>
         </ion-item>
       </ion-list>
 
       <!-- Entradas numéricas -->
       <ion-list *ngIf="currentStep === 3">
-        <ion-item *ngFor="let level of noiseLevels; let i = index; trackBy: trackByFn">
+        <ion-item
+          *ngFor="let level of noiseLevels; let i = index; trackBy: trackByFn"
+        >
           <ion-label position="floating">Nivel de ruido</ion-label>
-          <ion-input type="number" [(ngModel)]="noiseLevels[i]" placeholder="Nivel de ruido"></ion-input>
+          <ion-input
+            type="number"
+            [(ngModel)]="noiseLevels[i]"
+            placeholder="Nivel de ruido"
+          ></ion-input>
         </ion-item>
-    
+
         <ion-button (click)="addNoiseLevelField()">+</ion-button>
-        
+
         <ion-item>
           <ion-label position="floating">Tiempo total (minutos)</ion-label>
-          <ion-input type="number" [(ngModel)]="exposureTime" placeholder="Tiempo"></ion-input>
+          <ion-input
+            type="number"
+            [(ngModel)]="exposureTime"
+            placeholder="Tiempo"
+          ></ion-input>
         </ion-item>
-    </ion-list>
-    
-
-      <ion-list *ngIf="currentStep === 4">
-        <ion-item>
-          <ion-label>
-            Nivel de Exposición Diario Equivalente (LAeq,d): {{ LAeqdResult }} dB
-          </ion-label>
-        </ion-item>
-        <!-- Aquí puedes añadir más detalles o opciones relacionadas con el resultado -->
       </ion-list>
+
+      <!-- currentStep 4 -->
+      <ion-card *ngIf="currentStep === 4">
+        <ion-card-content>
+          <!-- Tabla de Resumen -->
+          <ion-list>
+            <ion-item>
+              <ion-text
+                >Nivel de exposición al ruido diario ponderado A:</ion-text
+              >
+              <ion-text>{{ LAeqdResult }} dB(A)</ion-text>
+            </ion-item>
+            <ion-item>
+              <ion-text>Incertidumbre Expandida:</ion-text>
+              <ion-text>{{ uncertainty }} dB(A)</ion-text>
+            </ion-item>
+            <ion-item>
+              <ion-text>Número de valores medidos:</ion-text>
+              <ion-text>{{ noiseLevels.length }}</ion-text>
+            </ion-item>
+          </ion-list>
+
+          <!-- Tabla de Contribución a la Incertidumbre -->
+          <ion-list>
+            <ion-item>
+              <ion-text>Contribución a la incertidumbre</ion-text>
+              <ion-text>Símbolos, relaciones</ion-text>
+              <ion-text>Valor (dB)</ion-text>
+            </ion-item>
+            <!-- Aquí puedes iterar sobre tus fuentes de incertidumbre y mostrarlas -->
+            <!-- Por simplicidad, solo muestro un par de filas como ejemplo -->
+            <ion-item>
+              <ion-text>Nivel de ruido</ion-text>
+              <ion-text>(C<sub>1</sub> * u<sub>1</sub>)<sup>2</sup></ion-text>
+              <ion-text>  dB</ion-text>
+            </ion-item>
+            <ion-item>
+              <ion-text>Instrumentos de medición    </ion-text>
+              <ion-text>(u<sub>2</sub>)<sup>2</sup></ion-text>
+              <ion-text>  dB</ion-text>
+            </ion-item>
+            <ion-item>
+              <ion-text>Posición de la medición      </ion-text>
+              <ion-text>(u<sub>3</sub>)<sup>2</sup></ion-text>
+              <ion-text>  dB</ion-text>
+            </ion-item>
+            <!-- ... otras fuentes de incertidumbre ... -->
+            <ion-item>
+              <ion-text>Suma      </ion-text>
+              <ion-text>u<sup>2</sup>(L<sub>EX,8h</sub>)</ion-text>
+              <ion-text>  dB</ion-text>
+            </ion-item>
+          </ion-list>
+
+          <!-- Card de Incertidumbre Típica de los Instrumentos -->
+          <ion-card>
+            <ion-card-content>
+              <ion-list>
+                <ion-item>
+                  <ion-text
+                    >Incertidumbre típica de los instrumentos</ion-text
+                  >
+                  <ion-text>Valor y nombre del instrumento</ion-text>
+                </ion-item>
+                <!-- Aquí puedes iterar sobre tus instrumentos y mostrar su incertidumbre -->
+                <!-- Por simplicidad, solo muestro un ejemplo -->
+                <ion-item>
+                  <ion-text>{{instrumentValue}} dB</ion-text>
+                  <ion-text>{{instrumentName}}</ion-text>
+                </ion-item>
+                <!-- ... otros instrumentos ... -->
+              </ion-list>
+            </ion-card-content>
+          </ion-card>
+
+          <!-- Card de Duración Efectiva de la Jornada Laboral -->
+          <ion-card>
+            <ion-card-content>
+              <ion-list>
+                <ion-item>
+                  <ion-text>Duración efectiva de la jornada laboral {{ exposureTime }} minutos</ion-text>
+                </ion-item>
+              </ion-list>
+              <!-- Datos colocados en el noiseLevel -->
+              <ion-list>
+                <!-- Aquí puedes iterar sobre tus noiseLevels y mostrarlos -->
+                <!-- Por simplicidad, solo muestro un ejemplo -->
+                <ion-item>
+                  <ion-text>Nivel de ruido 1:</ion-text>
+                  <ion-text><!-- Valor dB --></ion-text>
+                </ion-item>
+                <!-- ... otros niveles de ruido ... -->
+              </ion-list>
+            </ion-card-content>
+          </ion-card>
+        </ion-card-content>
+      </ion-card>
 
       <!-- Botón para avanzar al siguiente paso o generar el PDF -->
       <ion-button expand="full" *ngIf="currentStep > 1" (click)="previousStep()"
