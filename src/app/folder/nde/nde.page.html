@@ -20,7 +20,6 @@
           </i>
         </p>
         <ion-item>
-          <ion-label>Elige el método de medida</ion-label>
           <ion-select
             [(ngModel)]="selectedMethod"
             (ionChange)="updateNoiseLevels()"
@@ -59,7 +58,6 @@
 
         <!-- Opciones de Instrumentos de Medición -->
         <ion-item>
-          <ion-label>Elige el instrumento de medición</ion-label>
           <ion-select [(ngModel)]="selectedInstrument">
             <ion-select-option [value]="1"
               >Sonómetro de clase 1, según se especifica en la Norma IEC
@@ -121,94 +119,108 @@
       <ion-card *ngIf="currentStep === 4">
         <ion-card-content>
           <!-- Tabla de Resumen -->
-          <ion-list>
-            <ion-item>
-              <ion-text
-                >Nivel de exposición al ruido diario ponderado A:</ion-text
-              >
-              <ion-text>{{ LAeqdResult }} dB(A)</ion-text>
-            </ion-item>
-            <ion-item>
-              <ion-text>Incertidumbre Expandida:</ion-text>
-              <ion-text>{{ uncertainty }} dB(A)</ion-text>
-            </ion-item>
-            <ion-item>
-              <ion-text>Número de valores medidos:</ion-text>
-              <ion-text>{{ noiseLevels.length }}</ion-text>
-            </ion-item>
-          </ion-list>
+          <ion-card>
+            <ion-card-content>
+              <ion-grid>
+                <ion-row>
+                  <ion-col
+                    >Nivel de exposición al ruido diario ponderado A:</ion-col
+                  >
+                  <ion-col> {{ LAeqdResult }} dB(A)</ion-col>
+                </ion-row>
+              </ion-grid>
+              <ion-grid>
+                <ion-row>
+                  <ion-col>Incertidumbre Expandida:</ion-col>
+                  <ion-col> {{ uncertainty }} dB(A)</ion-col>
+                </ion-row>
+              </ion-grid>
+              <ion-grid>
+                <ion-row>
+                  <ion-col>Número de valores medidos:</ion-col>
+                  <ion-col> {{ noiseLevels.length }}</ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
 
           <!-- Tabla de Contribución a la Incertidumbre -->
-          <ion-list>
-            <ion-item>
-              <ion-text>Contribución a la incertidumbre</ion-text>
-              <ion-text>Símbolos, relaciones</ion-text>
-              <ion-text>Valor (dB)</ion-text>
-            </ion-item>
-            <!-- Aquí puedes iterar sobre tus fuentes de incertidumbre y mostrarlas -->
-            <!-- Por simplicidad, solo muestro un par de filas como ejemplo -->
-            <ion-item>
-              <ion-text>Nivel de ruido</ion-text>
-              <ion-text>(C<sub>1</sub> * u<sub>1</sub>)<sup>2</sup></ion-text>
-              <ion-text>  dB</ion-text>
-            </ion-item>
-            <ion-item>
-              <ion-text>Instrumentos de medición    </ion-text>
-              <ion-text>(u<sub>2</sub>)<sup>2</sup></ion-text>
-              <ion-text>  dB</ion-text>
-            </ion-item>
-            <ion-item>
-              <ion-text>Posición de la medición      </ion-text>
-              <ion-text>(u<sub>3</sub>)<sup>2</sup></ion-text>
-              <ion-text>  dB</ion-text>
-            </ion-item>
-            <!-- ... otras fuentes de incertidumbre ... -->
-            <ion-item>
-              <ion-text>Suma      </ion-text>
-              <ion-text>u<sup>2</sup>(L<sub>EX,8h</sub>)</ion-text>
-              <ion-text>  dB</ion-text>
-            </ion-item>
-          </ion-list>
+          <ion-card>
+            <ion-card-content>
+              <ion-grid>
+                <ion-row>
+                  <ion-col>Contribución a la incertidumbre</ion-col>
+                  <ion-col>Símbolos, relaciones</ion-col>
+                  <ion-col>Valor (dB)</ion-col>
+                </ion-row>
+                <!-- Aquí puedes iterar sobre tus fuentes de incertidumbre y mostrarlas -->
+                <!-- Por simplicidad, solo muestro un par de filas como ejemplo -->
+                <ion-row>
+                  <ion-col>Nivel de ruido</ion-col>
+                  <ion-col>(C<sub>1</sub> * u<sub>1</sub>)<sup>2</sup></ion-col>
+                  <ion-col> dB</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>Instrumentos de medición </ion-col>
+                  <ion-col>(u<sub>2</sub>)<sup>2</sup></ion-col>
+                  <ion-col> dB</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>Posición de la medición </ion-col>
+                  <ion-col>(u<sub>3</sub>)<sup>2</sup></ion-col>
+                  <ion-col> dB</ion-col>
+                </ion-row>
+                <!-- ... otras fuentes de incertidumbre ... -->
+                <ion-row>
+                  <ion-col>Suma</ion-col>
+                  <ion-col>u<sup>2</sup>(L<sub>EX,8h</sub>)</ion-col>
+                  <ion-col> dB</ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
 
           <!-- Card de Incertidumbre Típica de los Instrumentos -->
           <ion-card>
             <ion-card-content>
-              <ion-list>
-                <ion-item>
-                  <ion-text
-                    >Incertidumbre típica de los instrumentos</ion-text
-                  >
-                  <ion-text>Valor y nombre del instrumento</ion-text>
-                </ion-item>
+              <ion-grid>
+                <ion-row>
+                  <ion-col>Incertidumbre típica de los instrumentos</ion-col>
+                  <ion-col>Valor y nombre del instrumento</ion-col>
+                </ion-row>
                 <!-- Aquí puedes iterar sobre tus instrumentos y mostrar su incertidumbre -->
                 <!-- Por simplicidad, solo muestro un ejemplo -->
-                <ion-item>
-                  <ion-text>{{instrumentValue}} dB</ion-text>
-                  <ion-text>{{instrumentName}}</ion-text>
-                </ion-item>
+                <ion-row>
+                  <ion-col>{{instrumentValue}} dB </ion-col>
+                  <ion-col>{{instrumentName}}</ion-col>
+                </ion-row>
                 <!-- ... otros instrumentos ... -->
-              </ion-list>
+              </ion-grid>
             </ion-card-content>
           </ion-card>
 
           <!-- Card de Duración Efectiva de la Jornada Laboral -->
           <ion-card>
             <ion-card-content>
-              <ion-list>
-                <ion-item>
-                  <ion-text>Duración efectiva de la jornada laboral {{ exposureTime }} minutos</ion-text>
-                </ion-item>
-              </ion-list>
+              <ion-grid>
+                <ion-row>
+                  <ion-col>Duración efectiva de la jornada laboral </ion-col>
+                  <ion-col> {{ exposureTime }} minutos</ion-col>
+                </ion-row>
+              </ion-grid>
               <!-- Datos colocados en el noiseLevel -->
-              <ion-list>
+              <ion-grid>
                 <!-- Aquí puedes iterar sobre tus noiseLevels y mostrarlos -->
                 <!-- Por simplicidad, solo muestro un ejemplo -->
-                <ion-item>
-                  <ion-text>Nivel de ruido 1:</ion-text>
-                  <ion-text><!-- Valor dB --></ion-text>
-                </ion-item>
-                <!-- ... otros niveles de ruido ... -->
-              </ion-list>
+                <ion-row>
+                  <ion-col>Muestra</ion-col>
+                  <ion-col> dB(A)</ion-col>
+                </ion-row>
+                <ion-row *ngFor="let data of nivelRuido()">
+                  <ion-col>{{ data.label }}</ion-col>
+                  <ion-col>{{ data.value }} dB(A)</ion-col>
+                </ion-row>
+              </ion-grid>
             </ion-card-content>
           </ion-card>
         </ion-card-content>
@@ -226,9 +238,6 @@
         *ngIf="currentStep === 4"
         (click)="generatePDF()"
         >Generar PDF</ion-button
-      >
-      <ion-button expand="full" *ngIf="pdfSaved" (click)="openPDF()"
-        >Abrir PDF</ion-button
       >
     </ion-card-content>
   </ion-card>

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { dataImage64 } from './image';
+
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
 // import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
@@ -29,6 +31,35 @@ export class NdePage implements OnInit {
   currentStep = 1;
   pdfObject: any;
   pdfSaved: boolean = false;
+
+  nivelRuido() {
+    const tableData = [];
+    for (let i = 0; i < this.noiseLevels.length; i++) {
+      tableData.push({
+        label: 'Muestra ' + (i+1),
+        value: this.noiseLevels[i]
+      });
+    }
+    return tableData;
+  }
+
+  nameMedicion(): { name: string } {
+    let name = '';
+
+    switch (this.selectedMethod) {
+      case '1':
+        name = 'Medición basada en el puesto de trabajo';
+        break;
+      case '2':
+        name = 'Medición de una jornada completa';
+        break;
+      case '3':
+        name = 'Medición basada en la tarea';
+        break;
+    }
+
+    return { name };
+  }
 
   nameInstrument(): { name: string; value: number } {
     let name = '';
@@ -63,6 +94,7 @@ export class NdePage implements OnInit {
     }
     if (this.currentStep === 2 && !this.selectedInstrument) {
       // Muestra un mensaje de error
+      console.log(this.selectedInstrument);
       alert('Por favor, elige un instrumento de medición.');
       return;
     }
@@ -72,6 +104,12 @@ export class NdePage implements OnInit {
       return;
     }
     this.currentStep++;
+    if (this.currentStep === 3) {
+      this.instrumentInfo = this.nameInstrument();
+      this.instrumentName = this.instrumentInfo.name;
+      this.instrumentValue = this.instrumentInfo.value;
+      this.uncertainty = this.calculateUncertainty(this.instrumentValue);
+    }
     if (this.currentStep === 4) {
       this.LAeqdResult = this.calculateLAeqd(
         this.noiseLevels,
@@ -83,6 +121,7 @@ export class NdePage implements OnInit {
       this.currentStep = 1;
     }
   }
+
   previousStep() {
     this.currentStep--;
     if (this.currentStep < 1) {
@@ -139,326 +178,206 @@ export class NdePage implements OnInit {
 
     // Incertidumbre expandida
     const expandedUncertainty = coverageFactor * combinedUncertainty;
-
+    console.log(expandedUncertainty);
     return parseFloat(expandedUncertainty.toFixed(1)); // Redondear a dos decimales
   }
 
-
-
   generatePDF() {
+    const nameMethod = this.nameMedicion();
+    const tableBody = [];
+    tableBody.push(['Nivel de ruido dB(A)']);
+    for (let i = 0; i < this.noiseLevels.length; i++) {
+      tableBody.push([this.noiseLevels[i].toString()]);
+    }
     var dd = {
       content: [
         {
-          text: 'Unordered list',
-          style: 'header',
+          image: dataImage64,
+          width: 150,
+          alignment: 'center',
+          margin: [0, 0, 0, 10],
+        },
+        {
+          text: 'INFORME - Evaluación de la exposición al ruido',
+          bold: true,
+          fontSize: 16,
+          margin: [0, 0, 0, 10],
+          alignment: 'center',
+        },
+        'Esta herramienta facilita el cálculo de las ecuaciones básicas para la evaluación de la exposición a ruido',
+        {
+          text:
+            'Nivel de exposición al ruido diario ponderado A: ' +
+            this.LAeqdResult,
+          margin: [0, 10, 0, 5],
+        },
+        {
+          text: 'Incertidumbre expandida U: ' + this.uncertainty,
+          margin: [0, 5, 0, 5],
+        },
+        {
+          text: 'Número de valores medido: ' + this.noiseLevels.length,
+          margin: [0, 5, 0, 5],
+        },
 
-          ul: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nUnordered list with longer lines', style: 'header' },
+        // Datos en tabla
         {
-          ul: [
-            'item 1',
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-            'item 3',
-          ],
-        },
-        { text: '\n\nOrdered list', style: 'header' },
-        {
-          ol: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nOrdered list with longer lines', style: 'header' },
-        {
-          ol: [
-            'item 1',
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-            'item 3',
-          ],
-        },
-        { text: '\n\nOrdered list should be descending', style: 'header' },
-        {
-          reversed: true,
-          ol: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nOrdered list with start value', style: 'header' },
-        {
-          start: 50,
-          ol: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nOrdered list with own values', style: 'header' },
-        {
-          ol: [
-            { text: 'item 1', counter: 10 },
-            { text: 'item 2', counter: 20 },
-            { text: 'item 3', counter: 30 },
-            { text: 'item 4 without own value' },
-          ],
-        },
-        { text: '\n\nNested lists (ordered)', style: 'header' },
-        {
-          ol: [
-            'item 1',
-            [
-              'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-              {
-                ol: [
-                  'subitem 1',
-                  'subitem 2',
-                  'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                  'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                  'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                  {
-                    text: [
-                      'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                      'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                      'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                      'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                      'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                      'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                      'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                      'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    ],
-                  },
-
-                  'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                  'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                  'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                  'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                  'subitem 4',
-                  'subitem 5',
-                ],
-              },
+          table: {
+            widths: ['*', '*', '*'],
+            body: [
+              [
+                'Contribución a la incertidumbre',
+                'Símbolos, relaciones',
+                'Valor db(A)',
+              ],
+              [
+                'Nivel de ruido',
+                {
+                  text: [
+                    { text: '(' + 'C', fontSize: 12 },
+                    { text: '1', fontSize: 7, baseline: 'sub' },
+                    { text: ' * u', fontSize: 12 },
+                    { text: '1', fontSize: 7, baseline: 'sub' },
+                    { text: ')', fontSize: 12 },
+                    { text: '2', fontSize: 7, baseline: 'super' },
+                  ],
+                },
+                '0,09',
+              ],
+              [
+                'Instrumentos de medición',
+                {
+                  text: [
+                    { text: '(', fontSize: 12 },
+                    { text: 'u', fontSize: 12 },
+                    { text: '2', fontSize: 7, baseline: 'sub' },
+                    { text: ')', fontSize: 12 },
+                    { text: '2', fontSize: 7, baseline: 'super' },
+                  ],
+                },
+                '0.49',
+              ],
+              [
+                'Posición de la medición',
+                {
+                  text: [
+                    { text: '(', fontSize: 12 },
+                    { text: 'u', fontSize: 10 },
+                    { text: '2', fontSize: 7, baseline: 'sub' },
+                    { text: ')', fontSize: 12 },
+                    { text: '2', fontSize: 7, baseline: 'super' },
+                  ],
+                },
+                '1',
+              ],
+              [
+                'Suma',
+                {
+                  text: [
+                    { text: 'u', fontSize: 12 },
+                    { text: '2', fontSize: 7, baseline: 'super' },
+                    { text: '(', fontSize: 12 },
+                    { text: 'L', fontSize: 12 },
+                    { text: 'EX,8h', fontSize: 7, baseline: 'super' },
+                    { text: ')', fontSize: 12 },
+                  ],
+                },
+                '1.58',
+              ],
             ],
-            'item 3\nsecond line of item3',
-          ],
+          },
+          margin: [0, 10, 0, 10],
         },
-        { text: '\n\nNested lists (unordered)', style: 'header' },
         {
-          ol: [
-            'item 1',
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
+          text: 'Datos de partida',
+          margin: [0, 10, 0, 10],
+          bold: true,
+          alignment: 'center',
+        },
+        {
+          canvas: [
             {
-              ul: [
-                'subitem 1',
-                'subitem 2',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                {
-                  text: [
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                  ],
-                },
+              type: 'line',
+              x1: 0,
+              y1: 5,
+              x2: 515,
+              y2: 5,
+              lineWidth: 1,
+            },
+          ],
+          margin: [0, 10, 0, 0], // [izquierda, arriba, derecha, abajo]
+        },
+        {
+          text: 'Selección del método de cálculo',
+          margin: [0, 10, 0, 10],
+          bold: true,
+        },
+        {
+          text: 'Elija el método de cálculo que desee utilizar, en función de la información de que dispone:',
+          margin: [0, 10, 0, 10],
+          bold: true,
+        },
+        {
+          text: nameMethod.name,
+        },
+        {
+          text: 'Medición basada en un puesto de trabajo o medición de una jornada completa',
+          margin: [0, 10, 0, 10],
+          bold: true,
+        },
+        {
+          canvas: [
+            {
+              type: 'line',
+              x1: 0,
+              y1: 5,
+              x2: 515,
+              y2: 5,
+              lineWidth: 1,
+            },
+          ],
+          margin: [0, 10, 0, 0], // [izquierda, arriba, derecha, abajo]
+        },
+        {
+          text: 'Especifique la incertidumbre típica u de los instrumentos de medición utilizados:',
+          margin: [0, 10, 0, 10],
+          bold: true,
+        },
+        {
+          text: this.instrumentName,
+        },
+        {
+          canvas: [
+            {
+              type: 'line',
+              x1: 0,
+              y1: 5,
+              x2: 515,
+              y2: 5,
+              lineWidth: 1,
+            },
+          ],
+          margin: [0, 10, 0, 0], // [izquierda, arriba, derecha, abajo]
+        },
+        { text: 'Muestras:', margin: [0, 10, 0, 5] },
 
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 4',
-                'subitem 5',
-              ],
-            },
-            'item 3\nsecond line of item3',
-          ],
-        },
-        { text: '\n\nUnordered lists inside columns', style: 'header' },
+        //datos en tabla
         {
-          columns: [
-            {
-              ul: [
-                'item 1',
-                'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-              ],
-            },
-            {
-              ul: [
-                'item 1',
-                'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-              ],
-            },
-          ],
-        },
-        { text: '\n\nOrdered lists inside columns', style: 'header' },
-        {
-          columns: [
-            {
-              ol: [
-                'item 1',
-                'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-              ],
-            },
-            {
-              ol: [
-                'item 1',
-                'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-              ],
-            },
-          ],
-        },
-        { text: '\n\nNested lists width columns', style: 'header' },
-        {
-          ul: [
-            'item 1',
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-            {
-              ol: [
-                [
-                  {
-                    columns: [
-                      'column 1',
-                      {
-                        stack: [
-                          'column 2',
-                          {
-                            ul: [
-                              'item 1',
-                              'item 2',
-                              {
-                                ul: ['item', 'item', 'item'],
-                              },
-                              'item 4',
-                            ],
-                          },
-                        ],
-                      },
-                      'column 3',
-                      'column 4',
-                    ],
-                  },
-                  'subitem 1 in a vertical container',
-                  'subitem 2 in a vertical container',
-                ],
-                'subitem 2',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                {
-                  text: [
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                    'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                  ],
-                },
-
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 3 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit',
-                'subitem 4',
-                'subitem 5',
-              ],
-            },
-            'item 3\nsecond line of item3',
-          ],
-        },
-        { text: '\n\nUnordered list with square marker type', style: 'header' },
-        {
-          type: 'square',
-          ul: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nUnordered list with circle marker type', style: 'header' },
-        {
-          type: 'circle',
-          ul: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nColored unordered list', style: 'header' },
-        {
-          color: 'blue',
-          ul: ['item 1', 'item 2', 'item 3'],
+          table: {
+            widths: ['*'],
+            body: tableBody,
+          },
         },
         {
-          text: '\n\nColored unordered list with own marker color',
-          style: 'header',
+          text: 'Duración efectiva: ' + this.exposureTime + ' minutos',
+          margin: [0, 10, 0, 5],
         },
+        ,
         {
-          color: 'blue',
-          markerColor: 'red',
-          ul: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nColored ordered list', style: 'header' },
-        {
-          color: 'blue',
-          ol: ['item 1', 'item 2', 'item 3'],
-        },
-        {
-          text: '\n\nColored ordered list with own marker color',
-          style: 'header',
-        },
-        {
-          color: 'blue',
-          markerColor: 'red',
-          ol: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nOrdered list - type: lower-alpha', style: 'header' },
-        {
-          type: 'lower-alpha',
-          ol: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nOrdered list - type: upper-alpha', style: 'header' },
-        {
-          type: 'upper-alpha',
-          ol: ['item 1', 'item 2', 'item 3'],
-        },
-
-        { text: '\n\nOrdered list - type: upper-roman', style: 'header' },
-        {
-          type: 'upper-roman',
-          ol: ['item 1', 'item 2', 'item 3', 'item 4', 'item 5'],
-        },
-        { text: '\n\nOrdered list - type: lower-roman', style: 'header' },
-        {
-          type: 'lower-roman',
-          ol: ['item 1', 'item 2', 'item 3', 'item 4', 'item 5'],
-        },
-        { text: '\n\nOrdered list - type: none', style: 'header' },
-        {
-          type: 'none',
-          ol: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nUnordered list - type: none', style: 'header' },
-        {
-          type: 'none',
-          ul: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nOrdered list with own separator', style: 'header' },
-        {
-          separator: ')',
-          ol: ['item 1', 'item 2', 'item 3'],
-        },
-        {
-          text: '\n\nOrdered list with own complex separator',
-          style: 'header',
-        },
-        {
-          separator: ['(', ')'],
-          ol: ['item 1', 'item 2', 'item 3'],
-        },
-        { text: '\n\nOrdered list with own items type', style: 'header' },
-        {
-          ol: [
-            'item 1',
-            { text: 'item 2', listType: 'none' },
-            { text: 'item 3', listType: 'upper-roman' },
-          ],
-        },
-        { text: '\n\nUnordered list with own items type', style: 'header' },
-        {
-          ul: [
-            'item 1',
-            { text: 'item 2', listType: 'none' },
-            { text: 'item 3', listType: 'circle' },
-          ],
+          text: 'Nota: La Uniminuto no garantiza la representatividad de los datos en la situación real del trabajo puesto que desconoce cómo se han obtenido, si los equipos son adecuados y si están correctamente calibrados, etc. Copyright. ©CUMD. Colombia. ',
+          margin: [0, 10, 0, 0],
+          fontSize: 8,
+          italics: true,
         },
       ],
       styles: {
@@ -507,11 +426,5 @@ export class NdePage implements OnInit {
     private plt: Platform
   ) {}
 
-  ngOnInit() {
-    this.instrumentInfo = this.nameInstrument();
-    console.log(this.selectedInstrument);
-    this.instrumentName = this.instrumentInfo.name;
-    this.instrumentValue = this.instrumentInfo.value;
-    this.uncertainty = this.calculateUncertainty(this.instrumentValue);
-  }
+  ngOnInit() {}
 }

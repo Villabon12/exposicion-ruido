@@ -7,3 +7,23 @@
   </ion-toolbar>
 </ion-header>
 
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+      <ion-card-title>
+        Referencias
+      </ion-card-title>
+
+      <ion-list>
+        <ion-item
+          *ngFor="let p of appPages" (click)="openLink(page.url)"
+          [routerLink]="[p.url]"
+          detail="true"
+        >
+          <ion-icon slot="start" [name]="p.icon"></ion-icon>
+          <ion-label>{{ p.title }}</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

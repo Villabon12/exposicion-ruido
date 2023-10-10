@@ -7,6 +7,14 @@ const routes: Routes = [
   {
     path: '',
     component: OtherPage
+  },
+  {
+    path: 'nse',
+    loadChildren: () => import('./nse/nse.module').then( m => m.NsePageModule)
+  },
+  {
+    path: 'ctm',
+    loadChildren: () => import('./ctm/ctm.module').then( m => m.CtmPageModule)
   }
 ];
 

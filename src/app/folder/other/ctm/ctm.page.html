@@ -1,0 +1,70 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Otros cálculos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+      <ion-card-title class="ion-text-center">
+        Evaluación de la exposición al ruido <br />
+        Cálculos básicos
+      </ion-card-title>
+      <p class="ion-text-center">Cálculo del tiempo máximo de exposición</p>
+      <!-- Método de medida -->
+      <ion-list *ngIf="currentStep === 1">
+        <p>
+          <i> *Entrada de datos: </i>
+        </p>
+        <ion-item>
+          <ion-label position="floating">Valor L<sub>Aeq,T</sub></ion-label>
+          <ion-input
+            type="number"
+            [(ngModel)]="noiseLevels1"
+            placeholder="dB(A)"
+          ></ion-input>
+        </ion-item>
+        <ion-item>          
+          <ion-label position="floating">L ref</ion-label>
+          <ion-select [(ngModel)]="selectedMethod">
+            <ion-select-option value="80"
+              >80 dB(A)</ion-select-option
+            >
+            <ion-select-option value="85"
+              >85 dB(A)</ion-select-option
+            >
+          </ion-select>
+        </ion-item>
+      </ion-list>
+
+      <!-- Título y Nota para el currentStep 2 -->
+
+      <!-- Entradas numéricas -->
+      <ion-list *ngIf="currentStep === 2">
+            <h1 class="ion-text-center"><strong>{{ horas }}h/{{ minutos }} min</strong></h1>
+            <br>
+      </ion-list>
+
+      <!-- Botón para avanzar al siguiente paso o generar el PDF -->
+      <ion-button expand="full" *ngIf="currentStep > 1" (click)="previousStep()"
+        >Anterior</ion-button
+      >
+      <ion-button expand="full" *ngIf="currentStep < 2" (click)="nextStep()"
+        >Siguiente</ion-button
+      >
+      <ion-button
+        expand="full"
+        *ngIf="currentStep === 2"
+        (click)="generatePDF()"
+        >Generar PDF</ion-button
+      >
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+
+

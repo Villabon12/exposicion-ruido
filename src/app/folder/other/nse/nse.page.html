@@ -1,0 +1,84 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Otros cálculos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+      <ion-card-title class="ion-text-center">
+        Evaluación de la exposición al ruido <br />
+        Cálculos básicos
+      </ion-card-title>
+      <p class="ion-text-center">L<sub>Aeq,s</sub></p>
+      <!-- Método de medida -->
+      <ion-list *ngIf="currentStep === 1">
+        <p>
+          <i> *Indique el instrumento de medición empleado: </i>
+        </p>
+        <ion-item>
+          <ion-select [(ngModel)]="selectedMethod">
+            <ion-select-option value="1"
+              >Sonómetro integrador de tipo 1</ion-select-option
+            >
+            <ion-select-option value="2"
+              >Sonómetro integrador de tipo 2</ion-select-option
+            >
+            <ion-select-option value="3">Dósimetro</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+
+      <!-- Título y Nota para el currentStep 2 -->
+      <ion-list *ngIf="currentStep === 2">
+        <p>
+          <i> *Entrada de datos: </i>
+        </p>
+        <ion-item>
+          <ion-label position="floating">Valor L<sub>Aeq,d</sub></ion-label>
+          <ion-input
+            type="number"
+            [(ngModel)]="noiseLevels1"
+            placeholder="dB(A)"
+          ></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Valor L<sub>Aeq,d</sub></ion-label>
+          <ion-input
+            type="number"
+            [(ngModel)]="noiseLevels2"
+            placeholder="dB(A)"
+          ></ion-input>
+        </ion-item>
+      </ion-list>
+
+      <!-- Entradas numéricas -->
+      <ion-list *ngIf="currentStep === 3">
+            <p class="ion-text-center">Nivel de exposición semanal equivalente, L<sub>Aeq,s</sub></p>
+            <h1 class="ion-text-center"><strong>L<sub>Aeq,s</sub>: {{ LAeqsResult }}</strong></h1>
+            <br>
+            <p id="{{color}}">{{mensaje}}</p>
+            <br><p><strong>Incertidumbre:</strong></p>
+            <br><p>Si el resultado está próximo a los valores de referencia, tenga en cuenta que al considerar la incertidumbre global, el valor de L<sub>Aeq,d </sub> podria sobrepasar dichos valores. A titulo informativo la incertidumbre en el resultado debido al instrumento de medición es de 0.7 dB. Puede obtener la incertidumbre global asociada a las mediciones de ruido mediante el calculador</p>
+      </ion-list>
+
+      <!-- Botón para avanzar al siguiente paso o generar el PDF -->
+      <ion-button expand="full" *ngIf="currentStep > 1" (click)="previousStep()"
+        >Anterior</ion-button
+      >
+      <ion-button expand="full" *ngIf="currentStep < 3" (click)="nextStep()"
+        >Siguiente</ion-button
+      >
+      <ion-button
+        expand="full"
+        *ngIf="currentStep === 3"
+        (click)="generatePDF()"
+        >Generar PDF</ion-button
+      >
+    </ion-card-content>
+  </ion-card>
+</ion-content>
