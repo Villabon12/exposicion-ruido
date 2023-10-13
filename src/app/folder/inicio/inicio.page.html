@@ -8,25 +8,25 @@
   </ion-toolbar>
 </ion-header>
 
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+      <img src="assets/ruido-salud-ocupacional-riesgo-laboral.jpg" />
+      <ion-card-title> Evaluacion de la exposición al ruido </ion-card-title>
+      <p>
+        Esta herramienta facilita el cálculo de las ecuaciones básicas para la
+        evaluación de la exposición del ruido
+      </p>
+    </ion-card-content>
+  </ion-card>
 
-<ion-card>
-  <ion-card-content>
-    <img src="assets/ruido-salud-ocupacional-riesgo-laboral.jpg"/>
-    <ion-card-title>
-      Evaluacion de la exposición al ruido
-    </ion-card-title>
-    <p>
-      Esta herramienta facilita el cálculo de las ecuaciones básicas para la evaluación de la exposición del ruido
-    </p>
-  </ion-card-content>
-</ion-card>
-
-<!-- Card o navegación con las demás opciones -->
-<ion-card>
-  <ion-list>
-    <ion-item *ngFor="let p of appPages" [routerLink]="[p.url]" detail="true">
-      <ion-icon slot="start" [name]="p.icon"></ion-icon>
-      <ion-label>{{ p.title }}</ion-label>
-    </ion-item>
-  </ion-list>
-</ion-card>
+  <!-- Card o navegación con las demás opciones -->
+  <ion-card>
+    <ion-list>
+      <ion-item *ngFor="let p of appPages" [routerLink]="[p.url]" detail="true">
+        <ion-icon slot="start" [name]="p.icon"></ion-icon>
+        <ion-label>{{ p.title }}</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+</ion-content>

@@ -26,6 +26,10 @@ export class NdePage implements OnInit {
   instrumentName: string;
   instrumentValue: number;
   uncertainty: number;
+  RuidosNivel: number;
+  instrumtMedic : number;
+  posMedi : number;
+  suma: number;
 
   // Declara las otras variables numéricas aquí
   currentStep = 1;
@@ -115,6 +119,10 @@ export class NdePage implements OnInit {
         this.noiseLevels,
         this.exposureTime
       );
+      this.RuidosNivel = 0;
+      this.instrumtMedic = parseFloat(Math.pow(this.instrumentValue,2).toFixed(2));
+      this.posMedi = 1;
+      this.suma = this.RuidosNivel + this.instrumtMedic + this.posMedi
     }
     if (this.currentStep > 4) {
       // Si supera el número total de pasos, puedes resetearlo o navegar a otra página
@@ -156,22 +164,28 @@ export class NdePage implements OnInit {
     let sum = 0;
     for (let level of noiseLevels) {
       if (level) {
+        const elevado = 0.1*(level)
         // Asegúrate de que el nivel no sea nulo o cero
-        sum += Math.pow(10, level / 10) * (exposureTime / 60); // Convertir minutos a horas y multiplicar por el nivel de ruido
+        sum += (Math.pow(10, elevado)) * (exposureTime / 60); // Convertir minutos a horas y multiplicar por el nivel de ruido
+        console.log(sum);
       }
     }
 
     if (sum === 0) {
       return null; // Retorna null si no se puede calcular
     }
-
-    const LAeqd = 10 * Math.log10(sum / 8); // Dividir por 8 para obtener el promedio diario
+    const div = sum/8
+    const log = Math.log10(div)
+    const LAeqd = 10 * log; // Dividir por 8 para obtener el promedio diario
+    console.log(log);
+    console.log(div);
+    console.log(LAeqd);
     return parseFloat(LAeqd.toFixed(1)); // Redondear a dos decimales;
   }
 
   calculateUncertainty(instrumentUncertainty: number): number {
     // Factor de cobertura para un nivel de confianza del 95%
-    const coverageFactor = 2;
+    const coverageFactor = 1.5;
 
     // Incertidumbre combinada (usando solo la incertidumbre del instrumento en este caso)
     const combinedUncertainty = instrumentUncertainty; // Aquí puedes agregar más fuentes de incertidumbre si las tienes
@@ -183,6 +197,80 @@ export class NdePage implements OnInit {
   }
 
   generatePDF() {
+    alert('Se está generando espere...')
+    // Recomendaciones
+    const recomendacionesAlta = [
+      'Evitar la exposición  a niveles de ruido por encima de los 85 dB durante largos periodos de tiempo, puede producir pérdida auditiva inducida por ruido.',
+      'Evita sonidos que sean “demasiados altos” y que estén “demasiados cercanos”, o que duren “demasiado tiempo”.',
+      'Uso de tapones Auditivos u otros dispositivos de protección cuando haga alguna actividad que involucre ruidos fuertes.',
+      'Ten en cuenta cual es la intensidad del ruido a la que este expuesto y si requieres uso de protectores auditivos.',
+      
+    ];
+    const recomendacionesBaja = [
+      'Para proteger la audición se debe mantener una distancia entre el punto de origen del sonido y la persona.',
+      'Cada que cambien un equipo o maquina en tu área de trabajo o cerca de esta, pídele a tus superiores que realicen un nuevo análisis de intensidad del ruido',
+      'Consulta y analiza que alternativas se podrán utilizar para reducir o controlar el ruido como: utilización de barreras, rotación de personal o  modificación de procesos.',
+      'Evitar al máximo los factores de riesgos, algunos de ellos pueden estar presentes en entornos laborales y tomar acción sobre el cuidado auditivo',
+      'Lleva un control de las fechas y los resultados de los exámenes auditivos empresariales y pregunta al profesional que realiza las pruebas que significan , para tu salud diaria los números que te de.',
+    ];
+    const tableRecom = [];
+    if (this.LAeqdResult > 85) {      
+      for (let i = 0; i < recomendacionesAlta.length; i++) {
+        tableRecom.push([recomendacionesAlta[i].toString()]);
+      }
+    } else {
+      for (let i = 0; i < recomendacionesBaja.length; i++) {
+        tableRecom.push([recomendacionesBaja[i].toString()]);
+      }
+    }
+
+    // Plan de accion
+    const planAlta = [
+      'Planificar mediciones frecuentes de la exposición al ruido de acuerdo a los niveles de ruido del proceso'
+    ];
+    const planBaja = [
+      'Plan de capacitación anual que incluya los siguientes temas: efectos del ruido en la salud, conservación auditiva, estilos de vida saludables, higiene, cuidado de los oídos, uso de la protección auditiva.',
+      'Participación de los trabajadores en la identificación del riesgo y promoción de soluciones para mejorar procesos y controlar el riesgo.',
+      'Implementar  un programa de inspecciones de seguridad así como la implementación de listas de chequeo de máquinas y herramientas.',
+      'Realizar pausas de reposo sistemático o de rotación en las labores a los trabajadores expuestos.',
+      'Realizar controles de exámenes médicos periódicos para aquellos trabajadores que evidencian pérdida auditiva en frecuencias definidas según el grado de exposición.',
+      'Hacer uso de los de los protectores auditivos apropiados y realizar un adecuado proceso de higiene de estos.',
+      'Realizar campañas de control y prevención de esta manera podrás estar seguro de que tu entorno de trabajo es adecuado para todas las personas  que se encuentran ahí.',
+    ];
+    const tablePlan = [];
+    if (this.LAeqdResult > 85) {      
+      for (let i = 0; i < planAlta.length; i++) {
+        tableRecom.push([planAlta[i].toString()]);
+      }
+    } else {
+      for (let i = 0; i < planBaja.length; i++) {
+        tableRecom.push([planBaja[i].toString()]);
+      }
+    }
+    // Medidas preventivas
+    const medidasAlta = [
+      'Adquirir equipos que generen bajos niveles de ruido',
+      'Establecer un programa de mantenimiento preventivo de equipos con cáracter periódico.',
+      'Instalar apantallamientos y cerramientos acústicos.',      
+    ];
+    const medidasBaja = [
+      'Limitar tiempos de exposición',
+      'Limitar el número de trabajadores expuestos',
+      'Diseñar adecuadamente el puesto de trabajo',
+      'Ubicar los equipos que generen ruidos en estancias independientes',
+      'Alejar las fuentes con mayores niveles de ruido de los puestos de trabajo',
+    ];
+    const tableMed = [];
+    if (this.LAeqdResult > 85) {      
+      for (let i = 0; i < medidasAlta.length; i++) {
+        tableRecom.push([medidasAlta[i].toString()]);
+      }
+    } else {
+      for (let i = 0; i < medidasBaja.length; i++) {
+        tableRecom.push([medidasBaja[i].toString()]);
+      }
+    }
+
     const nameMethod = this.nameMedicion();
     const tableBody = [];
     tableBody.push(['Nivel de ruido dB(A)']);
@@ -255,7 +343,7 @@ export class NdePage implements OnInit {
                     { text: '2', fontSize: 7, baseline: 'super' },
                   ],
                 },
-                '0.49',
+                this.instrumtMedic,
               ],
               [
                 'Posición de la medición',
@@ -282,7 +370,7 @@ export class NdePage implements OnInit {
                     { text: ')', fontSize: 12 },
                   ],
                 },
-                '1.58',
+                this.suma,
               ],
             ],
           },
@@ -366,6 +454,33 @@ export class NdePage implements OnInit {
           table: {
             widths: ['*'],
             body: tableBody,
+          },
+        },
+        { text: 'Recomendaciones:', margin: [0, 10, 0, 5] },
+
+        //datos en tabla
+        {
+          table: {
+            widths: ['*'],
+            body: tableRecom,
+          },
+        },
+        { text: 'Plan de acción:', margin: [0, 10, 0, 5] },
+
+        //datos en tabla
+        {
+          table: {
+            widths: ['*'],
+            body: tablePlan,
+          },
+        },
+        { text: 'Medidas preventivas:', margin: [0, 10, 0, 5] },
+
+        //datos en tabla
+        {
+          table: {
+            widths: ['*'],
+            body: tableMed,
           },
         },
         {

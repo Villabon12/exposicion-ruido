@@ -6,7 +6,6 @@ import { dataImage64 } from './image';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
-
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { File } from '@ionic-native/file/ngx';
 
@@ -60,8 +59,11 @@ export class NsePage implements OnInit {
     if (this.currentStep === 3) {
       const datos = [this.noiseLevels1, this.noiseLevels2];
       this.LAeqsResult = this.calculateLw(datos);
-      this.color = this.LAeqsResult > 50 ? 'mensaje' : 'mensaje2';
-      this.mensaje = this.LAeqsResult > 50 ? 'La Lw es positiva' : 'La Lw es negativa';
+      this.color = this.LAeqsResult > 85 ? 'mensaje2' : 'mensaje';
+      this.mensaje =
+        this.LAeqsResult > 85
+          ? 'Se ha superado el valor superior de exposición que da lugar a una acción.'
+          : 'No se ha superado el valor inferior de exposición que da lugar a una acción.';
     }
 
     if (this.currentStep > 4) {
@@ -83,21 +85,52 @@ export class NsePage implements OnInit {
     for (let i = 0; i < dailyLevels.length; i++) {
       sum += Math.pow(10, dailyLevels[i] / 10);
     }
-    const average = sum / dailyLevels.length;
+    const average = sum / 5;
     const Lw = 10 * Math.log10(average);
     return parseFloat(Lw.toFixed(1));
   }
 
   generatePDF() {
+    alert('Se está generando espere');
     const valor = this.calculateLw([this.noiseLevels1, this.noiseLevels2]);
     const nameMethod = this.nameMedicion();
     const datos = [this.noiseLevels1, this.noiseLevels2];
-    const color = this.LAeqsResult > 50 ? 'green' : 'red';
-    const mensaje= this.LAeqsResult > 50 ? 'La Lw es positiva' : 'La Lw es negativa';
+    const color = this.LAeqsResult > 85 ? 'red' : 'green';
+    const mensaje =
+      this.LAeqsResult > 85
+        ? 'Se ha superado el valor superior de exposición que da lugar a una acción.'
+        : 'No se ha superado el valor inferior de exposición que da lugar a una acción.';
     const tableBody = [];
+    const tableHeader = [
+      'Evaluación de la exposición laboral a ruido',
+      'Formación e información preventiva',
+      'Control médico de la función auditiva',
+      'Protección auditiva personal',
+      'Información de la emisión de ruido en compra de equipos',
+      'Consulta y participación',
+      'Registro y archivo de datos de evaluaciones, controles médicos y gestión',
+    ];
+    const recomendaciones = [
+      'Inicial y si se cambian las condiciones de trabajo, o si los resultados de la vigilancia de la salud lo aconsejan, con una periodicidad mínima trienal',
+      'Sí, sobre: evaluación de exposición y riesgos para la salud, uso de protección auditiva, medidas preventivas tomadas, los valores de exposición y resultados de vigilancia de salud.',
+      'Inicial y adicionales siempre que la evaluación indique la existencia de un riesgo para la salud. Mínimo cada 5 años.',
+      'A disposición de los trabajadores expuestos.',
+      'Para la elección del equipo de trabajo adecuado que genere el menor nivel de ruido.',
+      'La evaluación y las medidas destinadas a eliminar o reducir los riesgos derivados de la exposición al ruido y la elección de protectores auditivos individuales.',
+      'Sí, de modo que puedan consultarse posteriormente respetando la confdencialidad de ciertos datos.',
+    ];
+    const table = [];
     tableBody.push(['Valor de LAeq,d dB(A)']);
     for (let i = 0; i < datos.length; i++) {
       tableBody.push([datos[i].toString()]);
+    }
+    if (this.LAeqsResult > 85) {      
+      for (let i = 0; i < tableHeader.length; i++) {
+        table.push([tableHeader[i].toString(), recomendaciones[i].toString()]);
+      }
+    } else {
+      table.push(['No hay recomendacion', 'No hay recomendacion']);
+    
     }
     var dd = {
       content: [
@@ -131,8 +164,9 @@ export class NsePage implements OnInit {
           text: [
             { text: 'L', fontSize: 12 },
             { text: 'Aeq,s', fontSize: 7, baseline: 'sub' },
-            { text: ':'+ valor, fontSize: 12 },
-          ],bold:true,
+            { text: ':' + valor, fontSize: 12 },
+          ],
+          bold: true,
         },
         {
           text: mensaje,
@@ -184,7 +218,7 @@ export class NsePage implements OnInit {
         {
           text: nameMethod.name,
         },
-        
+
         { text: 'Entrada de datos:', margin: [0, 10, 0, 5] },
 
         //datos en tabla
@@ -194,7 +228,15 @@ export class NsePage implements OnInit {
             body: tableBody,
           },
         },
-        
+        { text: 'Recomendaciones:', margin: [0, 10, 0, 5] },
+        //datos en tabla recomendaciones
+        {
+          table: {
+            widths: ['*', '*'],
+            body: table,
+          },
+        },
+
         {
           text: 'Nota: La Uniminuto no garantiza la representatividad de los datos en la situación real del trabajo puesto que desconoce cómo se han obtenido, si los equipos son adecuados y si están correctamente calibrados, etc. Copyright. ©CUMD. Colombia. ',
           margin: [0, 10, 0, 0],

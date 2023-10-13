@@ -33,8 +33,8 @@ export class CtmPage implements OnInit {
     this.currentStep++;
     if (this.currentStep === 2) {
       const datos = this.calculateMaxExposureTime(this.noiseLevels1,this.selectedMethod);
-      this.horas = datos.hours;
-      this.minutos = datos.minutes;
+      this.horas = parseFloat(datos.T.toFixed(2));
+      this.minutos = parseFloat(datos.minutes.toFixed(2));
     }
 
     if (this.currentStep > 2) {
@@ -51,17 +51,18 @@ export class CtmPage implements OnInit {
     }
   }
 
-  calculateMaxExposureTime(L_AeqT, Lref, Tref = 8) {
-    const T = Tref / Math.pow(2, (L_AeqT - Lref) / 3);
+  calculateMaxExposureTime(L_AeqT, Lref) {
+    const T = 8 * Math.pow(10, (Lref - L_AeqT ) / 10);
     
     // Convertir la parte decimal en minutos
-    const hours = Math.floor(T);
-    const minutes = Math.round((T - hours) * 60);
+    const hours = T;
+    const minutes = (hours) * 60;
     
-    return { hours, minutes };
+    return { T, minutes };
   }
 
   generatePDF() {
+    alert('Se está generando espere');
     var dd = {
       content: [
         {

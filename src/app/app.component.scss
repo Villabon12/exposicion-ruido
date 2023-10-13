@@ -1,9 +1,16 @@
 ion-menu ion-content {
   --background: var(--ion-item-background, var(--ion-background-color, #fff));
 }
+ion-list {
+  background-color: var(--custom-list-background);
+}
+ion-item {
+    --background: #f0f0f0;  // Cambia #f0f0f0 al color que desees
+  }
+  
 
 ion-content.md ion-item#imagen1{
-  background-color: #53565a;
+  background-color: #030303;
 }
 
 ion-menu.md ion-content {

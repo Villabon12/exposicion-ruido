@@ -18,11 +18,10 @@ export class RecursosPage implements OnInit {
   }
   
   public appPages = [
-    { title: 'Referencia 1', url: 'https://www.google.com/', icon: 'book' },
-    { title: 'Referencia 2', url: 'https://www.google.com/', icon: 'book' },
-    { title: 'Referencia 3', url: 'https://www.google.com/', icon: 'book' },
-    { title: 'Referencia 4', url: 'https://www.google.com/', icon: 'book' },
-    { title: 'Referencia 5', url: 'https://www.google.com/', icon: 'book' },
+    { title: 'Resolución 8321 del 4 de agosto de 1983', url: 'https://www.cornare.gov.co/SIAR/aire/RUIDO/NORMATIVA/Resolucion-8321-1983.pdf', icon: 'book' },
+    { title: 'Resolución 2400 de 1979 Ministerio del Trabajo capitulo IV', url: 'https://www.bogotajuridica.gov.co/sisjur/normas/Norma1.jsp?i=53565', icon: 'book' },
+    { title: 'RESOLUCION 0627 DE 2006', url: 'https://www.mincit.gov.co/ministerio/normograma-sig/procesos-de-apoyo/gestion-de-recursos-fisicos/resoluciones/resolucion-627-de-2006.aspx', icon: 'book' },
+    { title: 'NTP 270: Evaluación de la exposición al ruido. Determinación de niveles representativos', url: 'https://www.insst.es/documents/94886/327166/ntp_270.pdf/9c674732-ce77-481f-8c38-ffc03579bb75#:~:text=El%20L%20Aeq%2CT%20se,seg%C3%BAn%20se%20especifica%20a%20continuaci%C3%B3n.&text=El%20intervalo%20de%20medici%C3%B3n%20debe,del%20intervalo%20de%20tiempo%20considerado', icon: 'book' },
   ];
   constructor(private platform: Platform) { }
 
