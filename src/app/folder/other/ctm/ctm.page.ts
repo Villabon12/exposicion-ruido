@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, Platform } from '@ionic/angular';
+import { NavController, Platform, LoadingController } from '@ionic/angular';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { dataImage64 } from './image';
@@ -61,8 +61,12 @@ export class CtmPage implements OnInit {
     return { T, minutes };
   }
 
-  generatePDF() {
-    alert('Se está generando espere');
+  async generatePDF() {
+     // Muestra el indicador de carga
+     const loading = await this.loadingController.create({
+      message: 'Por favor espere...',
+    });
+    await loading.present();
     var dd = {
       content: [
         {
@@ -159,6 +163,7 @@ export class CtmPage implements OnInit {
     };
 
     this.pdfObject = pdfMake.createPdf(<any>dd);
+    loading.dismiss();
     this.downloadPdf();
   }
 
@@ -191,7 +196,8 @@ export class CtmPage implements OnInit {
     private navCtrl: NavController,
     private fileOpener: FileOpener,
     private file: File,
-    private plt: Platform
+    private plt: Platform,
+    private loadingController: LoadingController
   ) {}
 
   ngOnInit() {}

@@ -128,3 +128,19 @@ ion-note {
 ion-item.selected {
   --color: var(--ion-color-primary);
 }
+
+/* Detecta si el sistema está en modo oscuro */
+@media (prefers-color-scheme: dark) {
+  ion-menu ion-content {
+    --background: #2a2525;
+  }
+  ion-list {
+    background-color: var(--custom-list-background);
+  }
+  ion-item {
+    --background: #2a2525;  // Mantén el mismo color también en el modo oscuro
+  }
+  #imagen1{
+    --background: #f0f0f0;
+  }
+}

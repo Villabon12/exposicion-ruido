@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, Platform } from '@ionic/angular';
+import { NavController, Platform, LoadingController } from '@ionic/angular';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { dataImage64 } from './image';
@@ -27,8 +27,8 @@ export class NdePage implements OnInit {
   instrumentValue: number;
   uncertainty: number;
   RuidosNivel: number;
-  instrumtMedic : number;
-  posMedi : number;
+  instrumtMedic: number;
+  posMedi: number;
   suma: number;
 
   // Declara las otras variables numéricas aquí
@@ -40,8 +40,8 @@ export class NdePage implements OnInit {
     const tableData = [];
     for (let i = 0; i < this.noiseLevels.length; i++) {
       tableData.push({
-        label: 'Muestra ' + (i+1),
-        value: this.noiseLevels[i]
+        label: 'Muestra ' + (i + 1),
+        value: this.noiseLevels[i],
       });
     }
     return tableData;
@@ -120,9 +120,11 @@ export class NdePage implements OnInit {
         this.exposureTime
       );
       this.RuidosNivel = 0;
-      this.instrumtMedic = parseFloat(Math.pow(this.instrumentValue,2).toFixed(2));
+      this.instrumtMedic = parseFloat(
+        Math.pow(this.instrumentValue, 2).toFixed(2)
+      );
       this.posMedi = 1;
-      this.suma = this.RuidosNivel + this.instrumtMedic + this.posMedi
+      this.suma = this.RuidosNivel + this.instrumtMedic + this.posMedi;
     }
     if (this.currentStep > 4) {
       // Si supera el número total de pasos, puedes resetearlo o navegar a otra página
@@ -164,9 +166,9 @@ export class NdePage implements OnInit {
     let sum = 0;
     for (let level of noiseLevels) {
       if (level) {
-        const elevado = 0.1*(level)
+        const elevado = 0.1 * level;
         // Asegúrate de que el nivel no sea nulo o cero
-        sum += (Math.pow(10, elevado)) * (exposureTime / 60); // Convertir minutos a horas y multiplicar por el nivel de ruido
+        sum += Math.pow(10, elevado) * (exposureTime / 60); // Convertir minutos a horas y multiplicar por el nivel de ruido
         console.log(sum);
       }
     }
@@ -174,8 +176,8 @@ export class NdePage implements OnInit {
     if (sum === 0) {
       return null; // Retorna null si no se puede calcular
     }
-    const div = sum/8
-    const log = Math.log10(div)
+    const div = sum / 8;
+    const log = Math.log10(div);
     const LAeqd = 10 * log; // Dividir por 8 para obtener el promedio diario
     console.log(log);
     console.log(div);
@@ -196,15 +198,18 @@ export class NdePage implements OnInit {
     return parseFloat(expandedUncertainty.toFixed(1)); // Redondear a dos decimales
   }
 
-  generatePDF() {
-    alert('Se está generando espere...')
+  async generatePDF() {
+    // Muestra el indicador de carga
+    const loading = await this.loadingController.create({
+      message: 'Por favor espere...',
+    });
+    await loading.present();
     // Recomendaciones
     const recomendacionesAlta = [
       'Evitar la exposición  a niveles de ruido por encima de los 85 dB durante largos periodos de tiempo, puede producir pérdida auditiva inducida por ruido.',
       'Evita sonidos que sean “demasiados altos” y que estén “demasiados cercanos”, o que duren “demasiado tiempo”.',
       'Uso de tapones Auditivos u otros dispositivos de protección cuando haga alguna actividad que involucre ruidos fuertes.',
       'Ten en cuenta cual es la intensidad del ruido a la que este expuesto y si requieres uso de protectores auditivos.',
-      
     ];
     const recomendacionesBaja = [
       'Para proteger la audición se debe mantener una distancia entre el punto de origen del sonido y la persona.',
@@ -214,7 +219,7 @@ export class NdePage implements OnInit {
       'Lleva un control de las fechas y los resultados de los exámenes auditivos empresariales y pregunta al profesional que realiza las pruebas que significan , para tu salud diaria los números que te de.',
     ];
     const tableRecom = [];
-    if (this.LAeqdResult > 85) {      
+    if (this.LAeqdResult > 85) {
       for (let i = 0; i < recomendacionesAlta.length; i++) {
         tableRecom.push([recomendacionesAlta[i].toString()]);
       }
@@ -226,7 +231,7 @@ export class NdePage implements OnInit {
 
     // Plan de accion
     const planAlta = [
-      'Planificar mediciones frecuentes de la exposición al ruido de acuerdo a los niveles de ruido del proceso'
+      'Planificar mediciones frecuentes de la exposición al ruido de acuerdo a los niveles de ruido del proceso',
     ];
     const planBaja = [
       'Plan de capacitación anual que incluya los siguientes temas: efectos del ruido en la salud, conservación auditiva, estilos de vida saludables, higiene, cuidado de los oídos, uso de la protección auditiva.',
@@ -238,7 +243,7 @@ export class NdePage implements OnInit {
       'Realizar campañas de control y prevención de esta manera podrás estar seguro de que tu entorno de trabajo es adecuado para todas las personas  que se encuentran ahí.',
     ];
     const tablePlan = [];
-    if (this.LAeqdResult > 85) {      
+    if (this.LAeqdResult > 85) {
       for (let i = 0; i < planAlta.length; i++) {
         tableRecom.push([planAlta[i].toString()]);
       }
@@ -251,7 +256,7 @@ export class NdePage implements OnInit {
     const medidasAlta = [
       'Adquirir equipos que generen bajos niveles de ruido',
       'Establecer un programa de mantenimiento preventivo de equipos con cáracter periódico.',
-      'Instalar apantallamientos y cerramientos acústicos.',      
+      'Instalar apantallamientos y cerramientos acústicos.',
     ];
     const medidasBaja = [
       'Limitar tiempos de exposición',
@@ -261,7 +266,7 @@ export class NdePage implements OnInit {
       'Alejar las fuentes con mayores niveles de ruido de los puestos de trabajo',
     ];
     const tableMed = [];
-    if (this.LAeqdResult > 85) {      
+    if (this.LAeqdResult > 85) {
       for (let i = 0; i < medidasAlta.length; i++) {
         tableRecom.push([medidasAlta[i].toString()]);
       }
@@ -507,6 +512,8 @@ export class NdePage implements OnInit {
     };
 
     this.pdfObject = pdfMake.createPdf(<any>dd);
+    loading.dismiss();
+
     this.downloadPdf();
   }
 
@@ -538,7 +545,8 @@ export class NdePage implements OnInit {
     private navCtrl: NavController,
     private fileOpener: FileOpener,
     private file: File,
-    private plt: Platform
+    private plt: Platform,
+    private loadingController: LoadingController
   ) {}
 
   ngOnInit() {}

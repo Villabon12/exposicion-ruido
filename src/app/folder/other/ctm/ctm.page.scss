@@ -4,3 +4,17 @@ ion-list {
 ion-item {
   --background: #f0f0f0; // Cambia #f0f0f0 al color que desees
 }
+
+/* Detecta si el sistema está en modo oscuro */
+@media (prefers-color-scheme: dark) {
+  ion-list {
+    background-color: #2a2525;
+  }
+
+  ion-select-popover {
+    --background: #2a2525 ; // Cambia #f0f0f0 al color que desees
+  }
+  ion-item {
+    --background: #2a2525;  // Mantén el mismo color también en el modo oscuro
+  }
+}

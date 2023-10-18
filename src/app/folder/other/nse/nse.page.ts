@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, Platform } from '@ionic/angular';
+import { NavController, Platform, LoadingController } from '@ionic/angular';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { dataImage64 } from './image';
@@ -90,8 +90,12 @@ export class NsePage implements OnInit {
     return parseFloat(Lw.toFixed(1));
   }
 
-  generatePDF() {
-    alert('Se está generando espere');
+  async generatePDF() {
+    // Muestra el indicador de carga
+    const loading = await this.loadingController.create({
+      message: 'Por favor espere...',
+    });
+    await loading.present();
     const valor = this.calculateLw([this.noiseLevels1, this.noiseLevels2]);
     const nameMethod = this.nameMedicion();
     const datos = [this.noiseLevels1, this.noiseLevels2];
@@ -124,13 +128,12 @@ export class NsePage implements OnInit {
     for (let i = 0; i < datos.length; i++) {
       tableBody.push([datos[i].toString()]);
     }
-    if (this.LAeqsResult > 85) {      
+    if (this.LAeqsResult > 85) {
       for (let i = 0; i < tableHeader.length; i++) {
         table.push([tableHeader[i].toString(), recomendaciones[i].toString()]);
       }
     } else {
       table.push(['No hay recomendacion', 'No hay recomendacion']);
-    
     }
     var dd = {
       content: [
@@ -256,6 +259,7 @@ export class NsePage implements OnInit {
     };
 
     this.pdfObject = pdfMake.createPdf(<any>dd);
+    loading.dismiss();
     this.downloadPdf();
   }
 
@@ -287,7 +291,8 @@ export class NsePage implements OnInit {
     private navCtrl: NavController,
     private fileOpener: FileOpener,
     private file: File,
-    private plt: Platform
+    private plt: Platform,
+    private loadingController: LoadingController
   ) {}
 
   ngOnInit() {}
